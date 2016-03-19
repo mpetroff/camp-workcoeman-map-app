@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html manifest="manifest.appcache">
+<head>
+  <meta charset="utf-8">
+  <title>Offline cache</title>
+</head>
+<body>
+<script>
+window.applicationCache.addEventListener('cached', function() {
+    alert('The map is now available offline.');
+});
+window.applicationCache.addEventListener('updateready', function() {
+    alert('An updated map is available. Please reload the app to get it.')
+});
+window.applicationCache.addEventListener('obsolete', function() {
+    alert('The map is no longer available offline.');
+});
+</script>
+</body>
+</html>

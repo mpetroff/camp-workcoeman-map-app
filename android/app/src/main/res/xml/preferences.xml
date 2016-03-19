@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="zoom_buttons"
+        android:summary="@string/pref_summary_zoom_buttons"
+        android:title="@string/pref_title_zoom_buttons" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="location_button"
+        android:summary="@string/pref_summary_location_button"
+        android:title="@string/pref_title_location_button" />
+</PreferenceScreen>

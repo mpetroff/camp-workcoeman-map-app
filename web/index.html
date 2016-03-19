@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<!-- Camp Workcoeman Map Web App, Copyright (c) 2015-2016 Matthew Petroff -->
+<head>
+  <meta charset="utf-8"/>
+  <title>Camp Workcoeman Map</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"/>
+  <script src="mapbox-gl-js/mapbox-gl.js"></script>
+  <link href="mapbox-gl-js/mapbox-gl.css" rel="stylesheet"/>
+  <link href="style.css" rel="stylesheet"/>
+
+  <!-- iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="CW Map"/>
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon-57.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-touch-icon-76.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+
+  <!-- Android -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="icon" sizes="192x192" href="icons/launcher-icon-4x.png">
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="title-bar-title"><p>Camp Workcoeman Map</p></div>
+  <a href="about/">
+    <div class="about-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="20" width="20">
+        <path fill="#fff" d="m10 0a10 10 0 0 0 -10 10 10 10 0 0 0 10 10 10 10 0 0 0 10 -10 10 10 0 0 0 -10 -10zm0 1a9 9 0 0 1 9 9 9 9 0 0 1 -9 9 9 9 0 0 1 -9 -9 9 9 0 0 1 9 -9zm0 2.66016a1.10041 1.10041 0 0 0 -1.09961 1.09961 1.10041 1.10041 0 0 0 1.09961 1.10156 1.10041 1.10041 0 0 0 1.0996 -1.10156 1.10041 1.10041 0 0 0 -1.0996 -1.09961zm-0.91797 4.01757v8.06837h1.83597v-8.06837h-1.83597z"/>
+      </svg>
+    </div>
+  </a>
+</div>
+<div id="map"></div>
+
+<script>
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'map-data/style.json',
+    zoom: 17,
+    minZoom: 14,
+    maxBounds: [[-73.032, 41.878], [-73.058, 41.904]],
+    center: [-73.041, 41.888],
+    attributionControl: false
+});
+map.addControl(new mapboxgl.Navigation({position: 'bottom-left'}));
+
+// Offline caching when added to home screen
+if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('style', 'width:0px;height:0px;visibility:hidden;position:absolute;border:none');
+    iframe.src = 'offline-cache.html';
+    document.body.appendChild(iframe);
+} else {
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent)) {
+        if (!(document.cookie.indexOf('visited') >= 0)) {
+            alert('Add this web app to the home screen to be able to use the map offline.');
+            var time = new Date();
+            time.setTime(time.getTime() + 2592000000);
+            document.cookie = 'cookie=visited;expires=' + time.toUTCString() + ';path=/';
+        }
+    }
+}
+</script>
+
+</body>
+</html>

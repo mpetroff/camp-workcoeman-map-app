@@ -1,0 +1,11 @@
+CACHE MANIFEST
+# v0.1a
+
+index.html
+about.html
+app-copyright.html
+map-data-copyright.html
+style.css
+icons/about-icon.svg
+mapbox-gl-js/mapbox-gl.js
+mapbox-gl-js/mapbox-gl.css

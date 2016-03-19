@@ -1,0 +1,8 @@
+{
+    "center": "-73.0462,41.8922,15", 
+    "format": "pbf", 
+    "json": "{\"vector_layers\":[{\"id\":\"campsites\",\"description\":\"Campsites\",\"fields\":{\"name\":\"String\"}},{\"id\":\"clearings\",\"description\":\"Clearings\",\"fields\":{}},{\"id\":\"lake\",\"description\":\"Lake\",\"fields\":{\"name\":\"String\"}},{\"id\":\"other-areas\",\"description\":\"Other Areas\",\"fields\":{\"name\":\"String\"}},{\"id\":\"poi\",\"description\":\"Points of Interest\",\"fields\":{\"name\":\"String\"}},{\"id\":\"program-areas\",\"description\":\"Program Areas\",\"fields\":{\"name\":\"String\"}},{\"id\":\"property-line\",\"description\":\"Property Line\",\"fields\":{}},{\"id\":\"trails\",\"description\":\"Trails & Roads\",\"fields\":{\"name\":\"String\",\"show_label\":\"String\",\"surface\":\"String\",\"type\":\"String\"}},{\"id\":\"buildings\",\"description\":\"Buildings\",\"fields\":{\"name\":\"String\"}},{\"id\":\"labels\",\"description\":\"Label Positions\",\"fields\":{\"name\":\"String\",\"type\":\"String\"}},{\"id\":\"contours\",\"description\":\"Elevation Contours\",\"fields\":{\"ele\":\"Number\",\"index\":\"Number\"}},{\"id\":\"streams\",\"description\":\"Streams\",\"fields\":{\"name\":\"String\"}}]}", 
+    "minzoom": "12", 
+    "maxzoom": "18", 
+    "name": "Camp Workcoeman Data"
+}

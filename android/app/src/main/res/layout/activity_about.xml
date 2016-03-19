@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="20dp"
+        tools:context=".AboutActivity">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@mipmap/ic_launcher"
+            android:contentDescription="@string/app_name" />
+
+        <TextView
+            android:id="@+id/about_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/about_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="20dp"
+            android:text="@string/about_version"
+            android:textAppearance="@android:style/TextAppearance.Medium" />
+
+        <TextView
+            android:id="@+id/about_map"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hyphenationFrequency="full"
+            android:text="@string/about_map" />
+
+        <Button
+            android:id="@+id/app_copyright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="openAppCopyright"
+            android:text="@string/app_copyright_label" />
+
+        <Button
+            android:id="@+id/map_data_copyright"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="openMapDataCopyright"
+            android:text="@string/map_data_copyright_label" />
+    </LinearLayout>
+</ScrollView>

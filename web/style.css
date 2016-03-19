@@ -1,0 +1,103 @@
+html {
+  -webkit-text-size-adjust: 100%;
+  font-family: "Myriad Set Pro", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-size: 18px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #333;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+#map, .about, .copyright {
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  width: 100%;
+}
+
+.about, .copyright {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title-bar {
+  position: absolute;
+  top: 0;
+  height: 50px;
+  width: 100%;
+  background: #333;
+}
+
+.title-bar-title {
+  color: #fff;
+  height: 50px;
+  margin-left: 10px;
+}
+
+.title-bar-title > p {
+  display: table-cell;
+  height: 50px;
+  vertical-align: middle;
+  cursor: default;
+}
+
+.title-with-back {
+  padding-left: 30px;
+}
+
+.about-icon {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.back-icon {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+}
+
+.center {
+  text-align: center;
+}
+
+.large-text {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.info-text {
+  font-size: 15px;
+  padding: 5px;
+}
+
+.copyright-link {
+  -webkit-border-radius: 10;
+  -moz-border-radius: 10;
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  border: solid #333 1px;
+  text-decoration: none;
+  margin: 5px;
+  padding: 5px;
+  text-align: center;
+}
+
+.about a {
+  text-decoration: none;
+  color: #333;
+}
+
+.icon {
+  height: 60px;
+  width: 60px;
+  padding-top: 10px;
+}

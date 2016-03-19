@@ -1,0 +1,100 @@
+{
+	"bounds": [-73.125, 41.83682786072714, -72.94921875, 41.96765920367816],
+	"center": [-73.0462, 41.8922, 15],
+	"description": "",
+	"format": "pbf",
+	"id": "cwdata",
+	"maxzoom": 18,
+	"minzoom": 12,
+	"name": "Camp Workcoeman Data",
+	"scheme": "xyz",
+	"tilejson": "2.0.0",
+	"tiles": ["asset://map-data/tiles/{z}/{x}/{y}.pbf"],
+	"vector_layers": [{
+		"description": "Campsites",
+		"fields": {
+			"name": "String"
+		},
+		"id": "campsites",
+		"source": "cwdata"
+	}, {
+		"description": "Clearings",
+		"fields": {},
+		"id": "clearings",
+		"source": "cwdata"
+	}, {
+		"description": "Lake",
+		"fields": {
+			"name": "String"
+		},
+		"id": "lake",
+		"source": "cwdata"
+	}, {
+		"description": "Other Areas",
+		"fields": {
+			"name": "String"
+		},
+		"id": "other-areas",
+		"source": "cwdata"
+	}, {
+		"description": "Points of Interest",
+		"fields": {
+			"name": "String"
+		},
+		"id": "poi",
+		"source": "cwdata"
+	}, {
+		"description": "Program Areas",
+		"fields": {
+			"name": "String"
+		},
+		"id": "program-areas",
+		"source": "cwdata"
+	}, {
+		"description": "Property Line",
+		"fields": {},
+		"id": "property-line",
+		"source": "cwdata"
+	}, {
+		"description": "Trails & Roads",
+		"fields": {
+			"name": "String",
+			"show_label": "String",
+			"surface": "String",
+			"type": "String"
+		},
+		"id": "trails",
+		"source": "cwdata"
+	}, {
+		"description": "Buildings",
+		"fields": {
+			"name": "String"
+		},
+		"id": "buildings",
+		"source": "cwdata"
+	}, {
+		"description": "Label Positions",
+		"fields": {
+			"name": "String",
+			"type": "String"
+		},
+		"id": "labels",
+		"source": "cwdata"
+	}, {
+		"description": "Elevation Contours",
+		"fields": {
+			"ele": "Number",
+			"index": "Number"
+		},
+		"id": "contours",
+		"source": "cwdata"
+	}, {
+		"description": "Streams",
+		"fields": {
+			"name": "String"
+		},
+		"id": "streams",
+		"source": "cwdata"
+	}],
+	"version": "1.0.0"
+}

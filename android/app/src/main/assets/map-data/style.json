@@ -1,0 +1,732 @@
+{
+    "version": 8,
+    "name": "Camp Workcoeman",
+    "center": [
+        -73.04166821625594,
+        41.887512007499964
+    ],
+    "zoom": 17,
+    "bearing": 0,
+    "pitch": 0,
+    "sources": {
+        "cwdata": {
+            "url": "asset://map-data/tilesource.json",
+            "type": "vector"
+        }
+    },
+    "sprite": "",
+    "glyphs": "asset://map-data/glyphs.pbf",
+    "layers": [
+        {
+            "id": "Background",
+            "type": "background",
+            "paint": {
+                "background-color": "rgba(235,245,233,1)"
+            },
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "fill",
+            "source": "cwdata",
+            "id": "Clearings",
+            "paint": {
+                "fill-color": "rgba(255,255,255,1)"
+            },
+            "source-layer": "clearings",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "line",
+            "source": "cwdata",
+            "id": "Streams",
+            "paint": {
+                "line-color": "#638db8",
+                "line-width": 2
+            },
+            "source-layer": "streams",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "line",
+            "source": "cwdata",
+            "id": "1m Contours",
+            "paint": {
+                "line-color": "#c4bebe",
+                "line-width": 1,
+                "line-opacity": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            17,
+                            0
+                        ],
+                        [
+                            18,
+                            1
+                        ]
+                    ]
+                }
+            },
+            "source-layer": "contours",
+            "interactive": true
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible"
+            },
+            "filter": [
+                "in",
+                "index",
+                2,
+                10
+            ],
+            "type": "line",
+            "source": "cwdata",
+            "id": "2m Contours",
+            "paint": {
+                "line-color": "#c4bebe",
+                "line-width": 1,
+                "line-opacity": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            15,
+                            0
+                        ],
+                        [
+                            16,
+                            1
+                        ]
+                    ]
+                }
+            },
+            "source-layer": "contours"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible"
+            },
+            "filter": [
+                "==",
+                "index",
+                10
+            ],
+            "type": "line",
+            "source": "cwdata",
+            "id": "10m Contours",
+            "paint": {
+                "line-color": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            15,
+                            "#c4bebe"
+                        ],
+                        [
+                            16,
+                            "#c49999"
+                        ]
+                    ]
+                },
+                "line-width": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            15,
+                            1
+                        ],
+                        [
+                            16,
+                            2
+                        ]
+                    ]
+                }
+            },
+            "source-layer": "contours"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": "{ele} m",
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "text-size": 12,
+                "symbol-placement": "line"
+            },
+            "filter": [
+                "==",
+                "index",
+                2
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "2m Contour Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2,
+                "text-color": "#555",
+                "text-opacity": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            17,
+                            0
+                        ],
+                        [
+                            18,
+                            1
+                        ]
+                    ]
+                }
+            },
+            "source-layer": "contours"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": "{ele} m",
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "text-size": 12,
+                "symbol-placement": "line"
+            },
+            "filter": [
+                "==",
+                "index",
+                10
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "10m Contour Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2,
+                "text-color": "#555",
+                "text-opacity": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            15,
+                            0
+                        ],
+                        [
+                            16,
+                            1
+                        ]
+                    ]
+                }
+            },
+            "source-layer": "contours"
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "fill",
+            "source": "cwdata",
+            "id": "Lake",
+            "paint": {
+                "fill-color": "rgba(99,141,184,1)"
+            },
+            "source-layer": "lake",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "fill",
+            "source": "cwdata",
+            "id": "Campsites",
+            "paint": {
+                "fill-color": "#ffaa7f"
+            },
+            "source-layer": "campsites",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "fill",
+            "source": "cwdata",
+            "id": "Program Areas",
+            "paint": {
+                "fill-color": "#55ff7f"
+            },
+            "source-layer": "program-areas",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "fill",
+            "source": "cwdata",
+            "id": "Other Areas",
+            "paint": {
+                "fill-color": "#00aa7f"
+            },
+            "source-layer": "other-areas",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "line",
+            "source": "cwdata",
+            "id": "Property Line",
+            "paint": {
+                "line-color": "rgba(170,0,0,1)",
+                "line-width": 1.5
+            },
+            "source-layer": "property-line",
+            "interactive": true
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "circle",
+            "source": "cwdata",
+            "id": "Points of Interest",
+            "paint": {
+                "circle-radius": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            13,
+                            2
+                        ],
+                        [
+                            16,
+                            5
+                        ]
+                    ]
+                }
+            },
+            "source-layer": "poi",
+            "interactive": true
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible"
+            },
+            "filter": [
+                "==",
+                "surface",
+                "footpath"
+            ],
+            "type": "line",
+            "source": "cwdata",
+            "id": "Footpaths",
+            "paint": {
+                "line-dasharray": [
+                    3,
+                    2
+                ],
+                "line-width": 1.5
+            },
+            "source-layer": "trails"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible"
+            },
+            "filter": [
+                "==",
+                "surface",
+                "unpaved"
+            ],
+            "type": "line",
+            "source": "cwdata",
+            "id": "Unpaved Roads",
+            "paint": {
+                "line-width": 2
+            },
+            "source-layer": "trails"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "line-join": "round",
+                "line-cap": "round"
+            },
+            "filter": [
+                "==",
+                "surface",
+                "paved"
+            ],
+            "type": "line",
+            "source": "cwdata",
+            "id": "Paved Roads - Outline",
+            "paint": {
+                "line-gap-width": 0,
+                "line-color": "rgba(0,0,0,1)",
+                "line-width": 4
+            },
+            "source-layer": "trails"
+        },
+        {
+            "interactive": true,
+            "id": "Paved Roads - Inside",
+            "paint": {
+                "line-gap-width": 0,
+                "line-color": "rgba(255,255,255,1)",
+                "line-width": 2
+            },
+            "ref": "Paved Roads - Outline"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible"
+            },
+            "filter": [
+                "in",
+                "type",
+                "logging road",
+                "old road"
+            ],
+            "type": "line",
+            "source": "cwdata",
+            "id": "Logging Roads",
+            "paint": {
+                "line-color": "rgba(170,0,0,1)",
+                "line-dasharray": [
+                    2,
+                    2
+                ],
+                "line-width": 1
+            },
+            "source-layer": "trails"
+        },
+        {
+            "layout": {
+                "visibility": "visible"
+            },
+            "type": "fill",
+            "source": "cwdata",
+            "id": "Buildings",
+            "paint": {},
+            "source-layer": "buildings",
+            "interactive": true
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            0,
+                            ""
+                        ],
+                        [
+                            17,
+                            "{name}"
+                        ],
+                        [
+                            22,
+                            "{name}"
+                        ]
+                    ]
+                },
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "text-size": 13,
+                "text-max-width": 5
+            },
+            "filter": [
+                "==",
+                "type",
+                "building"
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Building Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2
+            },
+            "source-layer": "labels"
+        },
+        {
+            "layout": {
+                "visibility": "visible",
+                "text-field": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            0,
+                            ""
+                        ],
+                        [
+                            14,
+                            "{name}"
+                        ],
+                        [
+                            22,
+                            "{name}"
+                        ]
+                    ]
+                },
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "text-anchor": "center",
+                "text-offset": [
+                    0,
+                    1
+                ]
+            },
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Points of Interest Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2,
+                "text-halo-blur": 0,
+                "text-translate": [
+                    0,
+                    0
+                ]
+            },
+            "source-layer": "poi",
+            "interactive": true
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            0,
+                            ""
+                        ],
+                        [
+                            14,
+                            "{name}"
+                        ],
+                        [
+                            22,
+                            "{name}"
+                        ]
+                    ]
+                },
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ]
+            },
+            "filter": [
+                "==",
+                "type",
+                "lake"
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Lake Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2
+            },
+            "source-layer": "labels"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            0,
+                            ""
+                        ],
+                        [
+                            16,
+                            "{name}"
+                        ],
+                        [
+                            22,
+                            "{name}"
+                        ]
+                    ]
+                },
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "text-size": 13,
+                "text-max-width": 5,
+                "text-line-height": 1
+            },
+            "filter": [
+                "==",
+                "type",
+                "other"
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Other Area Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2
+            },
+            "source-layer": "labels"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            0,
+                            ""
+                        ],
+                        [
+                            16,
+                            "{name}"
+                        ],
+                        [
+                            22,
+                            "{name}"
+                        ]
+                    ]
+                },
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "text-max-width": 5,
+                "text-line-height": 1
+            },
+            "filter": [
+                "==",
+                "type",
+                "program"
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Program Area Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2
+            },
+            "source-layer": "labels"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "visibility": "visible",
+                "text-field": {
+                    "base": 1,
+                    "stops": [
+                        [
+                            0,
+                            ""
+                        ],
+                        [
+                            16,
+                            "{name}"
+                        ],
+                        [
+                            22,
+                            "{name}"
+                        ]
+                    ]
+                },
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "symbol-placement": "point",
+                "text-max-width": 5,
+                "text-line-height": 1
+            },
+            "filter": [
+                "==",
+                "type",
+                "campsite"
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Campsite Labels",
+            "paint": {
+                "text-halo-width": 2,
+                "text-halo-blur": 0,
+                "text-halo-color": "rgba(255,255,255,1)"
+            },
+            "source-layer": "labels"
+        },
+        {
+            "interactive": true,
+            "layout": {
+                "text-optional": false,
+                "text-size": 14,
+                "text-allow-overlap": false,
+                "symbol-avoid-edges": false,
+                "text-ignore-placement": false,
+                "symbol-spacing": 300,
+                "text-font": [
+                    "Source Sans Pro Regular",
+                    "Arial Unicode MS Regular"
+                ],
+                "symbol-placement": "line",
+                "text-padding": 10,
+                "visibility": "visible",
+                "text-rotation-alignment": "map",
+                "text-field": "{name}"
+            },
+            "filter": [
+                "==",
+                "show_label",
+                "yes"
+            ],
+            "type": "symbol",
+            "source": "cwdata",
+            "id": "Trail & Road Labels",
+            "paint": {
+                "text-halo-color": "rgba(255,255,255,1)",
+                "text-halo-width": 2,
+                "text-halo-blur": 0
+            },
+            "source-layer": "trails"
+        }
+    ],
+    "created": "2015-12-22T22:28:33.496Z",
+    "id": "ciihyqp6j000b1mmbif2ol13t",
+    "modified": "2016-01-02T17:11:45.396Z",
+    "owner": "mpetroff",
+    "draft": false
+}
