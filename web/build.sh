@@ -21,13 +21,3 @@ cp -r about build/
 
 # Insert base url
 sed -i "s@BASEURL@$1@g" build/map-data/tilesource.json
-
-# Generate application cache manifest
-echo 'CACHE MANIFEST' > build/manifest.appcache
-printf '# v' >> build/manifest.appcache
-cat VERSION >> build/manifest.appcache
-printf '# ' >> build/manifest.appcache
-find build -type f -print0 | sort -z | xargs -0 sha1sum | sha1sum \
-    | sed 's/  -//g' >> build/manifest.appcache
-find build -type f | sort | sed 's/build\///g' | sed 's/manifest.appcache//g' \
-    | sed '/^$/d' >> build/manifest.appcache

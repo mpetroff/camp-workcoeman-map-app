@@ -49,23 +49,6 @@ var map = new mapboxgl.Map({
     attributionControl: false
 });
 map.addControl(new mapboxgl.Navigation({position: 'bottom-left'}));
-
-// Offline caching when added to home screen
-if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
-    var iframe = document.createElement('iframe');
-    iframe.setAttribute('style', 'width:0px;height:0px;visibility:hidden;position:absolute;border:none');
-    iframe.src = 'offline-cache.html';
-    document.body.appendChild(iframe);
-} else {
-    if (/iPhone|iPad|iPod/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent)) {
-        if (!(document.cookie.indexOf('visited') >= 0)) {
-            alert('Add this web app to the home screen to be able to use the map offline.');
-            var time = new Date();
-            time.setTime(time.getTime() + 2592000000);
-            document.cookie = 'cookie=visited;expires=' + time.toUTCString() + ';path=/';
-        }
-    }
-}
 </script>
 
 </body>
