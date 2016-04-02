@@ -67,6 +67,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".AboutActivity" />
         </activity>
+        <service android:name="com.mapbox.mapboxsdk.telemetry.TelemetryService" />
     </application>
 
 </manifest>

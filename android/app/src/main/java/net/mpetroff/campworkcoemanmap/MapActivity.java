@@ -2,7 +2,9 @@ package net.mpetroff.campworkcoemanmap;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -24,15 +26,21 @@ import android.widget.Toast;
 
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
+import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.views.MapView;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.TrackingSettings;
+import com.mapbox.mapboxsdk.maps.UiSettings;
 
 public class MapActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_LOCATION = 0;
     private MapView mapView;
+    private MapboxMap mapboxMap;
     private FloatingActionButton locationToggle;
     private boolean updating = false;
     private Toast toast = null;
@@ -46,43 +54,59 @@ public class MapActivity extends AppCompatActivity {
         }
         setContentView(R.layout.activity_map);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        final MapActivity thisActivity = this;
+
+        /** Make sure phoning home to Mapbox is good and dead. */
+        SharedPreferences prefs = this.getSharedPreferences(MapboxConstants.MAPBOX_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(MapboxConstants.MAPBOX_SHARED_PREFERENCE_KEY_TELEMETRY_ENABLED, false);
+        editor.apply();
+        editor.commit();
 
         /** Initialize map */
         mapView = (MapView) findViewById(R.id.mapview);
         mapView.setStyleUrl(getString(R.string.map_style));
-        mapView.setLatLng(new LatLng(41.88780, -73.04193));
-        mapView.setZoom(16);
-        mapView.onCreate(savedInstanceState);
-        mapView.setLogoVisibility(View.GONE);
-        mapView.setAttributionVisibility(View.GONE);
-        mapView.setCompassEnabled(true);
-        mapView.setTiltEnabled(false);
-        mapView.setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
-                this).getBoolean("zoom_buttons", false));
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull MapboxMap m) {
+                mapboxMap = m;
+                mapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(41.88780, -73.04193), 16));
+                UiSettings ui = mapboxMap.getUiSettings();
+                ui.setLogoEnabled(false);
+                ui.setAttributionEnabled(false);
+                ui.setCompassEnabled(true);
+                ui.setTiltGesturesEnabled(false);
+                ui.setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
+                        thisActivity).getBoolean("zoom_buttons", false));
 
-        /**
-         * Location button toggles between location disabled, track location, and track location
-         * and rotate map based on compass bearing. When map is moved, location remains displayed
-         * but is no longer tracked.
-         */
-        locationToggle = (FloatingActionButton) findViewById(R.id.location_toggle);
-        locationToggle.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                if (mapView.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE) {
-                    enableLocation();
-                } else if (mapView.getMyBearingTrackingMode() == MyBearingTracking.NONE) {
-                    mapView.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
-                    locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
-                            R.drawable.ic_location_bearing_tracking));
-                } else {
-                    disableLocation();
+                /**
+                 * Location button toggles between location disabled, track location, and track location
+                 * and rotate map based on compass bearing. When map is moved, location remains displayed
+                 * but is no longer tracked.
+                 */
+                locationToggle = (FloatingActionButton) findViewById(R.id.location_toggle);
+                locationToggle.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        TrackingSettings tracking = mapboxMap.getTrackingSettings();
+                        if (tracking.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE) {
+                            enableLocation();
+                        } else if (tracking.getMyBearingTrackingMode() == MyLocationTracking.TRACKING_NONE) {
+                            tracking.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
+                            locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
+                                    R.drawable.ic_location_bearing_tracking));
+                        } else {
+                            disableLocation();
+                        }
+                    }
+                });
+                if (!PreferenceManager.getDefaultSharedPreferences(thisActivity).getBoolean(
+                        "location_button", true)) {
+                    locationToggle.setVisibility(View.GONE);
                 }
             }
         });
-        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-                "location_button", true)) {
-            locationToggle.setVisibility(View.GONE);
-        }
+
+        mapView.onCreate(savedInstanceState);
 
         /**
          * Restrict map bounds. There doesn't seem to be a built-in way to do this yet...
@@ -92,8 +116,8 @@ public class MapActivity extends AppCompatActivity {
             public void onMapChanged(int change) {
                 if ((change == MapView.REGION_DID_CHANGE
                         || change == MapView.REGION_DID_CHANGE_ANIMATED
-                        || change == MapView.REGION_IS_CHANGING) && !updating) {
-                    CameraPosition center = mapView.getCameraPosition();
+                        || change == MapView.REGION_IS_CHANGING) && !updating && mapboxMap != null) {
+                    CameraPosition center = mapboxMap.getCameraPosition();
                     LatLng newCenter = new LatLng(center.target);
                     boolean centerChange = false;
                     if (center.target.getLatitude() > 41.904) {
@@ -110,7 +134,7 @@ public class MapActivity extends AppCompatActivity {
                         newCenter.setLongitude(-73.058);
                         updating = centerChange = true;
                     }
-                    float zoom = center.zoom;
+                    float zoom = (float) center.zoom;
                     if (center.zoom < 13) {
                         zoom = 13;
                         updating = true;
@@ -123,9 +147,8 @@ public class MapActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT);
                             toast.show();
                         }
-                        mapView.animateCamera(CameraUpdateFactory.newCameraPosition(
-                                        new CameraPosition(newCenter, zoom, 0, 0)), 500,
-                                new MapView.CancelableCallback() {
+                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newCenter, zoom), 500,
+                                new MapboxMap.CancelableCallback() {
                                     public void onFinish() {
                                         disableLocation();
                                         updating = false;
@@ -155,15 +178,17 @@ public class MapActivity extends AppCompatActivity {
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, PERMISSIONS_LOCATION);
         } else {
-            mapView.setMyLocationEnabled(true);
-            mapView.setMyBearingTrackingMode(MyBearingTracking.NONE);
-            mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
+            TrackingSettings tracking = mapboxMap.getTrackingSettings();
+            //mapView.setMyLocationEnabled(true);
+            tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
+            tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
             locationToggle.setImageDrawable(ContextCompat.getDrawable(this,
                     R.drawable.ic_location_tracking));
             mapView.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View view, MotionEvent event) {
-                    mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
-                    mapView.setMyBearingTrackingMode(MyBearingTracking.NONE);
+                    TrackingSettings tracking = mapboxMap.getTrackingSettings();
+                    tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
+                    tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
                     locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
                             R.drawable.ic_location));
                     return false;
@@ -176,22 +201,17 @@ public class MapActivity extends AppCompatActivity {
      * Disable location tracking / display.
      */
     private void disableLocation() {
-        mapView.setMyLocationEnabled(false);
-        mapView.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
-        mapView.setMyBearingTrackingMode(MyBearingTracking.NONE);
+        TrackingSettings tracking = mapboxMap.getTrackingSettings();
+        //mapView.setMyLocationEnabled(false);
+        tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
+        tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
         locationToggle.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_location));
     }
 
     @Override
-    protected void onStart() {
+    public void onLowMemory() {
         super.onStart();
-        mapView.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mapView.onStop();
+        mapView.onLowMemory();
     }
 
     @Override
@@ -204,13 +224,15 @@ public class MapActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         // Reload preferences
-        mapView.setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
-                this).getBoolean("zoom_buttons", false));
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-                "location_button", true)) {
-            locationToggle.setVisibility(View.VISIBLE);
-        } else {
-            locationToggle.setVisibility(View.GONE);
+        if (mapboxMap != null) {
+            mapboxMap.getUiSettings().setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
+                    this).getBoolean("zoom_buttons", false));
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
+                    "location_button", true)) {
+                locationToggle.setVisibility(View.VISIBLE);
+            } else {
+                locationToggle.setVisibility(View.GONE);
+            }
         }
         mapView.onResume();
     }
