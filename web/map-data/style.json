@@ -15,7 +15,7 @@
         }
     },
     "sprite": "",
-    "glyphs": "map-data/glyphs.pbf",
+    "glyphs": "map-data/glyphs.pbf#{fontstack}{range}",
     "layers": [
         {
             "id": "Background",

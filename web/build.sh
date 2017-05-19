@@ -18,6 +18,7 @@ cp *.html build/
 cp manifest.json build/
 cp style.css build/
 cp -r about build/
+cp stay-standalone.js build/
 
 # Insert base url
 sed -i "s@BASEURL@$1@g" build/map-data/tilesource.json

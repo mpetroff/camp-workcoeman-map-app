@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<!-- Camp Workcoeman Map Web App, Copyright (c) 2015-2016 Matthew Petroff -->
+<!-- Camp Workcoeman Map Web App, Copyright (c) 2015-2017 Matthew Petroff -->
 <head>
   <meta charset="utf-8"/>
   <title>Camp Workcoeman Map</title>
@@ -46,11 +46,11 @@ var map = new mapboxgl.Map({
     style: 'map-data/style.json',
     zoom: 17,
     minZoom: 14,
-    maxBounds: [[-73.032, 41.878], [-73.058, 41.904]],
+    maxBounds: [[-73.058, 41.878], [-73.032, 41.904]],
     center: [-73.041, 41.888],
     attributionControl: false
 });
-map.addControl(new mapboxgl.Navigation({position: 'bottom-left'}));
+map.addControl(new mapboxgl.NavigationControl(), 'bottom-left');
 </script>
 
 </body>
