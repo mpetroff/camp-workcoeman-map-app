@@ -22,19 +22,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import com.mapbox.mapboxsdk.camera.CameraPosition;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.constants.MapboxConstants;
+import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.constants.MyBearingTracking;
 import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.TrackingSettings;
 import com.mapbox.mapboxsdk.maps.UiSettings;
+import com.mapbox.services.android.telemetry.constants.TelemetryConstants;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -42,12 +41,19 @@ public class MapActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxMap mapboxMap;
     private FloatingActionButton locationToggle;
-    private boolean updating = false;
-    private Toast toast = null;
+
+    private static final LatLngBounds CAMP_BOUNDS = new LatLngBounds.Builder()
+            .include(new LatLng(41.904, -73.032))
+            .include(new LatLng(41.878, -73.058))
+            .build();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Mapbox.getInstance(this, getString(R.string.access_token));
+
         setTitle(R.string.app_name);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name)));
@@ -56,21 +62,20 @@ public class MapActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         final MapActivity thisActivity = this;
 
-        /** Make sure phoning home to Mapbox is good and dead. */
-        SharedPreferences prefs = this.getSharedPreferences(MapboxConstants.MAPBOX_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE);
+        /* Make sure phoning home to Mapbox is good and dead. */
+        SharedPreferences prefs = this.getSharedPreferences(TelemetryConstants.MAPBOX_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(MapboxConstants.MAPBOX_SHARED_PREFERENCE_KEY_TELEMETRY_ENABLED, false);
+        editor.putBoolean(TelemetryConstants.MAPBOX_SHARED_PREFERENCE_KEY_TELEMETRY_ENABLED, false);
         editor.apply();
         editor.commit();
 
-        /** Initialize map */
+        /* Initialize map */
         mapView = (MapView) findViewById(R.id.mapview);
-        mapView.setStyleUrl(getString(R.string.map_style));
+        mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(@NonNull MapboxMap m) {
+            public void onMapReady(@NonNull final MapboxMap m) {
                 mapboxMap = m;
-                mapboxMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(41.88780, -73.04193), 16));
                 UiSettings ui = mapboxMap.getUiSettings();
                 ui.setLogoEnabled(false);
                 ui.setAttributionEnabled(false);
@@ -79,7 +84,11 @@ public class MapActivity extends AppCompatActivity {
                 ui.setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
                         thisActivity).getBoolean("zoom_buttons", false));
 
-                /**
+                // Restrict map bounds
+                mapboxMap.setLatLngBoundsForCameraTarget(CAMP_BOUNDS);
+                mapboxMap.setMinZoomPreference(13);
+
+                /*
                  * Location button toggles between location disabled, track location, and track location
                  * and rotate map based on compass bearing. When map is moved, location remains displayed
                  * but is no longer tracked.
@@ -88,9 +97,13 @@ public class MapActivity extends AppCompatActivity {
                 locationToggle.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         TrackingSettings tracking = mapboxMap.getTrackingSettings();
+                        PackageManager packageManager = getPackageManager();
                         if (tracking.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE) {
                             enableLocation();
-                        } else if (tracking.getMyBearingTrackingMode() == MyLocationTracking.TRACKING_NONE) {
+                        } else if (!packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)
+                                || !packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
+                            disableLocation();
+                        } else if (tracking.getMyBearingTrackingMode() == MyBearingTracking.NONE) {
                             tracking.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
                             locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
                                     R.drawable.ic_location_bearing_tracking));
@@ -102,64 +115,6 @@ public class MapActivity extends AppCompatActivity {
                 if (!PreferenceManager.getDefaultSharedPreferences(thisActivity).getBoolean(
                         "location_button", true)) {
                     locationToggle.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        mapView.onCreate(savedInstanceState);
-
-        /**
-         * Restrict map bounds. There doesn't seem to be a built-in way to do this yet...
-         */
-        mapView.addOnMapChangedListener(new MapView.OnMapChangedListener() {
-            @Override
-            public void onMapChanged(int change) {
-                if ((change == MapView.REGION_DID_CHANGE
-                        || change == MapView.REGION_DID_CHANGE_ANIMATED
-                        || change == MapView.REGION_IS_CHANGING) && !updating && mapboxMap != null) {
-                    CameraPosition center = mapboxMap.getCameraPosition();
-                    LatLng newCenter = new LatLng(center.target);
-                    boolean centerChange = false;
-                    if (center.target.getLatitude() > 41.904) {
-                        newCenter.setLatitude(41.904);
-                        updating = centerChange = true;
-                    } else if (center.target.getLatitude() < 41.878) {
-                        newCenter.setLatitude(41.878);
-                        updating = centerChange = true;
-                    }
-                    if (center.target.getLongitude() > -73.032) {
-                        newCenter.setLongitude(-73.032);
-                        updating = centerChange = true;
-                    } else if (center.target.getLongitude() < -73.058) {
-                        newCenter.setLongitude(-73.058);
-                        updating = centerChange = true;
-                    }
-                    float zoom = (float) center.zoom;
-                    if (center.zoom < 13) {
-                        zoom = 13;
-                        updating = true;
-                    }
-                    if (updating) {
-                        disableLocation();
-                        if (centerChange && (toast == null
-                                || !toast.getView().isShown())) {
-                            toast = Toast.makeText(getApplicationContext(), R.string.toast_left_camp,
-                                    Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                        mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newCenter, zoom), 500,
-                                new MapboxMap.CancelableCallback() {
-                                    public void onFinish() {
-                                        disableLocation();
-                                        updating = false;
-                                    }
-
-                                    public void onCancel() {
-                                        disableLocation();
-                                        updating = false;
-                                    }
-                                });
-                    }
                 }
             }
         });
@@ -179,11 +134,18 @@ public class MapActivity extends AppCompatActivity {
             }, PERMISSIONS_LOCATION);
         } else {
             TrackingSettings tracking = mapboxMap.getTrackingSettings();
-            //mapView.setMyLocationEnabled(true);
+            mapboxMap.setMyLocationEnabled(true);
             tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
             tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
-            locationToggle.setImageDrawable(ContextCompat.getDrawable(this,
-                    R.drawable.ic_location_tracking));
+            PackageManager packageManager = getPackageManager();
+            if (packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)
+                    && packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
+                locationToggle.setImageDrawable(ContextCompat.getDrawable(this,
+                        R.drawable.ic_location_tracking));
+            } else {
+                locationToggle.setImageDrawable(ContextCompat.getDrawable(this,
+                        R.drawable.ic_location_disabled_black_24dp));
+            }
             mapView.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View view, MotionEvent event) {
                     TrackingSettings tracking = mapboxMap.getTrackingSettings();
@@ -202,7 +164,7 @@ public class MapActivity extends AppCompatActivity {
      */
     private void disableLocation() {
         TrackingSettings tracking = mapboxMap.getTrackingSettings();
-        //mapView.setMyLocationEnabled(false);
+        mapboxMap.setMyLocationEnabled(false);
         tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
         tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
         locationToggle.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_location));
@@ -215,13 +177,25 @@ public class MapActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         super.onPause();
         mapView.onPause();
     }
 
     @Override
-    public void onResume() {
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    protected void onResume() {
         super.onResume();
         // Reload preferences
         if (mapboxMap != null) {

@@ -11,7 +11,10 @@
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        mapbox:access_token="@string/access_token" />
+        mapbox:mapbox_cameraTargetLat="41.88780"
+        mapbox:mapbox_cameraTargetLng="-73.04193"
+        mapbox:mapbox_cameraZoom="16"
+        mapbox:mapbox_styleUrl="@string/map_style"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/location_toggle"

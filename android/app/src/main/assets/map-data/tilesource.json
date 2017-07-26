@@ -4,7 +4,7 @@
 	"description": "",
 	"format": "pbf",
 	"id": "cwdata",
-	"maxzoom": 18,
+	"maxzoom": 16,
 	"minzoom": 12,
 	"name": "Camp Workcoeman Data",
 	"scheme": "xyz",
