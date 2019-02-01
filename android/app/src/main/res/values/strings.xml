@@ -2,7 +2,6 @@
     <string name="app_name">Camp Workcoeman Map</string>
     <string name="launcher_label">CW Map</string>
     <string name="access_token">pk.MapboxGLNativeInsistsOnAnAccessTokenEvenThoughItIsRunningCompletelyOffline</string>
-    <string name="map_style">asset://map-data/style.json</string>
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
     <string name="snackbar_denied_location">Location permission is required to show location.</string>

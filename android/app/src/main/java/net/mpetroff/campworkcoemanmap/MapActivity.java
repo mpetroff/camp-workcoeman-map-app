@@ -2,9 +2,7 @@ package net.mpetroff.campworkcoemanmap;
 
 import android.Manifest;
 import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -24,16 +22,17 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.constants.MyBearingTracking;
-import com.mapbox.mapboxsdk.constants.MyLocationTracking;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.TrackingSettings;
+import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.TelemetryDefinition;
 import com.mapbox.mapboxsdk.maps.UiSettings;
-import com.mapbox.services.android.telemetry.constants.TelemetryConstants;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -63,11 +62,8 @@ public class MapActivity extends AppCompatActivity {
         final MapActivity thisActivity = this;
 
         /* Make sure phoning home to Mapbox is good and dead. */
-        SharedPreferences prefs = this.getSharedPreferences(TelemetryConstants.MAPBOX_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(TelemetryConstants.MAPBOX_SHARED_PREFERENCE_KEY_TELEMETRY_ENABLED, false);
-        editor.apply();
-        editor.commit();
+        TelemetryDefinition telemetry = Mapbox.getTelemetry();
+        telemetry.setUserTelemetryRequestState(false);
 
         /* Initialize map */
         mapView = (MapView) findViewById(R.id.mapview);
@@ -81,12 +77,14 @@ public class MapActivity extends AppCompatActivity {
                 ui.setAttributionEnabled(false);
                 ui.setCompassEnabled(true);
                 ui.setTiltGesturesEnabled(false);
-                ui.setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
-                        thisActivity).getBoolean("zoom_buttons", false));
 
                 // Restrict map bounds
                 mapboxMap.setLatLngBoundsForCameraTarget(CAMP_BOUNDS);
                 mapboxMap.setMinZoomPreference(13);
+                mapboxMap.setMaxZoomPreference(20);
+
+                // Set map style
+                mapboxMap.setStyle(new Style.Builder().fromUrl("asset://map-data/style.json"));
 
                 /*
                  * Location button toggles between location disabled, track location, and track location
@@ -96,15 +94,15 @@ public class MapActivity extends AppCompatActivity {
                 locationToggle = (FloatingActionButton) findViewById(R.id.location_toggle);
                 locationToggle.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        TrackingSettings tracking = mapboxMap.getTrackingSettings();
+                        LocationComponent locationComponent = mapboxMap.getLocationComponent();
                         PackageManager packageManager = getPackageManager();
-                        if (tracking.getMyLocationTrackingMode() == MyLocationTracking.TRACKING_NONE) {
+                        if (!locationComponent.isLocationComponentEnabled()) {
                             enableLocation();
                         } else if (!packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)
                                 || !packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
                             disableLocation();
-                        } else if (tracking.getMyBearingTrackingMode() == MyBearingTracking.NONE) {
-                            tracking.setMyBearingTrackingMode(MyBearingTracking.COMPASS);
+                        } else if (locationComponent.getCameraMode() == CameraMode.TRACKING) {
+                            locationComponent.setCameraMode(CameraMode.TRACKING_COMPASS);
                             locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
                                     R.drawable.ic_location_bearing_tracking));
                         } else {
@@ -133,24 +131,26 @@ public class MapActivity extends AppCompatActivity {
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, PERMISSIONS_LOCATION);
         } else {
-            TrackingSettings tracking = mapboxMap.getTrackingSettings();
-            mapboxMap.setMyLocationEnabled(true);
-            tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
-            tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_FOLLOW);
+            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+            locationComponent.activateLocationComponent(this, mapboxMap.getStyle());
+            locationComponent.setLocationComponentEnabled(true);
             PackageManager packageManager = getPackageManager();
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)
                     && packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_GYROSCOPE)) {
                 locationToggle.setImageDrawable(ContextCompat.getDrawable(this,
                         R.drawable.ic_location_tracking));
+                locationComponent.setRenderMode(RenderMode.COMPASS);
             } else {
                 locationToggle.setImageDrawable(ContextCompat.getDrawable(this,
                         R.drawable.ic_location_disabled_black_24dp));
+                locationComponent.setRenderMode(RenderMode.NORMAL);
             }
+            locationComponent.setCameraMode(CameraMode.TRACKING);
             mapView.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View view, MotionEvent event) {
-                    TrackingSettings tracking = mapboxMap.getTrackingSettings();
-                    tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
-                    tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
+                    LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                    locationComponent.setLocationComponentEnabled(false);
+                    locationComponent.setCameraMode(CameraMode.NONE);
                     locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
                             R.drawable.ic_location));
                     return false;
@@ -163,10 +163,9 @@ public class MapActivity extends AppCompatActivity {
      * Disable location tracking / display.
      */
     private void disableLocation() {
-        TrackingSettings tracking = mapboxMap.getTrackingSettings();
-        mapboxMap.setMyLocationEnabled(false);
-        tracking.setMyLocationTrackingMode(MyLocationTracking.TRACKING_NONE);
-        tracking.setMyBearingTrackingMode(MyBearingTracking.NONE);
+        LocationComponent locationComponent = mapboxMap.getLocationComponent();
+        locationComponent.setLocationComponentEnabled(false);
+        locationComponent.setCameraMode(CameraMode.NONE);
         locationToggle.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_location));
     }
 
@@ -199,8 +198,6 @@ public class MapActivity extends AppCompatActivity {
         super.onResume();
         // Reload preferences
         if (mapboxMap != null) {
-            mapboxMap.getUiSettings().setZoomControlsEnabled(PreferenceManager.getDefaultSharedPreferences(
-                    this).getBoolean("zoom_buttons", false));
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
                     "location_button", true)) {
                 locationToggle.setVisibility(View.VISIBLE);
