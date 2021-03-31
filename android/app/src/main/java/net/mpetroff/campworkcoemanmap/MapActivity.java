@@ -7,7 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import androidx.preference.PreferenceManager;
 import android.provider.Settings;
 import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,6 +25,7 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
 import com.mapbox.mapboxsdk.maps.MapView;
@@ -40,6 +41,7 @@ public class MapActivity extends AppCompatActivity {
     private MapView mapView;
     private MapboxMap mapboxMap;
     private FloatingActionButton locationToggle;
+    private boolean locationComponentActivated = false;
 
     private static final LatLngBounds CAMP_BOUNDS = new LatLngBounds.Builder()
             .include(new LatLng(41.904, -73.032))
@@ -84,7 +86,7 @@ public class MapActivity extends AppCompatActivity {
                 mapboxMap.setMaxZoomPreference(20);
 
                 // Set map style
-                mapboxMap.setStyle(new Style.Builder().fromUrl("asset://map-data/style.json"));
+                mapboxMap.setStyle(new Style.Builder().fromUri("asset://map-data/style.json"));
 
                 /*
                  * Location button toggles between location disabled, track location, and track location
@@ -95,6 +97,13 @@ public class MapActivity extends AppCompatActivity {
                 locationToggle.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                        if (!locationComponentActivated) {
+                            LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions
+                                    .builder(thisActivity, mapboxMap.getStyle())
+                                    .build();
+                            locationComponent.activateLocationComponent(locationComponentActivationOptions);
+                            locationComponentActivated = true;
+                        }
                         PackageManager packageManager = getPackageManager();
                         if (!locationComponent.isLocationComponentEnabled()) {
                             enableLocation();
@@ -132,7 +141,6 @@ public class MapActivity extends AppCompatActivity {
             }, PERMISSIONS_LOCATION);
         } else {
             LocationComponent locationComponent = mapboxMap.getLocationComponent();
-            locationComponent.activateLocationComponent(this, mapboxMap.getStyle());
             locationComponent.setLocationComponentEnabled(true);
             PackageManager packageManager = getPackageManager();
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)
