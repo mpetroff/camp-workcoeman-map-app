@@ -32,7 +32,6 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.TelemetryDefinition;
 import com.mapbox.mapboxsdk.maps.UiSettings;
 
 public class MapActivity extends AppCompatActivity {
@@ -62,10 +61,6 @@ public class MapActivity extends AppCompatActivity {
         setContentView(R.layout.activity_map);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         final MapActivity thisActivity = this;
-
-        /* Make sure phoning home to Mapbox is good and dead. */
-        TelemetryDefinition telemetry = Mapbox.getTelemetry();
-        telemetry.setUserTelemetryRequestState(false);
 
         /* Initialize map */
         mapView = (MapView) findViewById(R.id.mapview);

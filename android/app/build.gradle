@@ -25,10 +25,7 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation('com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.1') {
-        transitive = true
-    }
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-telemetry:6.1.0' // See https://github.com/mapbox/mapbox-gl-native-android/issues/425#issuecomment-680753940
+    implementation 'org.maplibre.gl:android-sdk:9.4.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.3.0'
