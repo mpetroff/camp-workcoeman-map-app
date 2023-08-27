@@ -21,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MapActivity"
-            android:label="@string/launcher_label">
+            android:label="@string/launcher_label"
+            android:exported="true">
             <intent-filter android:label="@string/launcher_label">
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

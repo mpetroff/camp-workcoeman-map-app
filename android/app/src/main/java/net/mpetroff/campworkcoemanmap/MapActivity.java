@@ -52,7 +52,7 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Mapbox.getInstance(this, getString(R.string.access_token));
+        Mapbox.getInstance(this);
 
         setTitle(R.string.app_name);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
