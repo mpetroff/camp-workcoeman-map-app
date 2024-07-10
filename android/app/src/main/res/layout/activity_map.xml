@@ -11,9 +11,9 @@
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        mapbox:mapbox_cameraTargetLat="41.88780"
-        mapbox:mapbox_cameraTargetLng="-73.04193"
-        mapbox:mapbox_cameraZoom="16"/>
+        mapbox:maplibre_cameraTargetLat="41.88780"
+        mapbox:maplibre_cameraTargetLng="-73.04193"
+        mapbox:maplibre_cameraZoom="16"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/location_toggle"

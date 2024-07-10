@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.preference.PreferenceManager;
 import android.provider.Settings;
@@ -55,9 +54,7 @@ public class MapActivity extends AppCompatActivity {
         Mapbox.getInstance(this);
 
         setTitle(R.string.app_name);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name)));
-        }
+        setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name)));
         setContentView(R.layout.activity_map);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         final MapActivity thisActivity = this;
