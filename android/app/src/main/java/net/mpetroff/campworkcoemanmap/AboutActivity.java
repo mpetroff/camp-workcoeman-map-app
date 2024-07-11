@@ -47,4 +47,8 @@ public class AboutActivity extends AppCompatActivity {
     public void openMapDataCopyright(View view) {
         startActivity(new Intent(this, MapDataCopyrightActivity.class));
     }
+
+    public void openPrivacyPolicy(View view) {
+        startActivity(new Intent(this, PrivacyPolicyActivity.class));
+    }
 }

@@ -61,5 +61,12 @@
             android:layout_height="wrap_content"
             android:onClick="openMapDataCopyright"
             android:text="@string/map_data_copyright_label" />
+
+        <Button
+            android:id="@+id/privacy_policy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="openPrivacyPolicy"
+            android:text="@string/privacy_policy_label" />
     </LinearLayout>
 </ScrollView>

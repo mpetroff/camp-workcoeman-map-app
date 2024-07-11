@@ -24,8 +24,11 @@
         incomplete.</string>
     <string name="app_copyright_label">Application Copyright</string>
     <string name="map_data_copyright_label">Map Data Copyright</string>
+    <string name="privacy_policy_label">Privacy Policy</string>
     <string name="title_activity_app_copyright">Application Copyright</string>
     <string name="app_copyright_file">file:///android_asset/app_copyright.html</string>
     <string name="title_activity_map_data_copyright">Map Data Copyright</string>
     <string name="map_data_copyright_file">file:///android_asset/map_data_copyright.html</string>
+    <string name="title_activity_privacy_policy">Privacy Policy</string>
+    <string name="privacy_policy_file">file:///android_asset/privacy_policy.html</string>
 </resources>
