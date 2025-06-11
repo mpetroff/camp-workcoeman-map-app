@@ -20,24 +20,24 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.modes.CameraMode;
-import com.mapbox.mapboxsdk.location.modes.RenderMode;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.mapboxsdk.maps.UiSettings;
+import org.maplibre.android.MapLibre;
+import org.maplibre.android.geometry.LatLng;
+import org.maplibre.android.geometry.LatLngBounds;
+import org.maplibre.android.location.LocationComponent;
+import org.maplibre.android.location.LocationComponentActivationOptions;
+import org.maplibre.android.location.modes.CameraMode;
+import org.maplibre.android.location.modes.RenderMode;
+import org.maplibre.android.maps.MapView;
+import org.maplibre.android.maps.MapLibreMap;
+import org.maplibre.android.maps.OnMapReadyCallback;
+import org.maplibre.android.maps.Style;
+import org.maplibre.android.maps.UiSettings;
 
 public class MapActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_LOCATION = 0;
     private MapView mapView;
-    private MapboxMap mapboxMap;
+    private MapLibreMap mapLibreMap;
     private FloatingActionButton locationToggle;
     private boolean locationComponentActivated = false;
 
@@ -51,7 +51,7 @@ public class MapActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Mapbox.getInstance(this);
+        MapLibre.getInstance(this);
 
         setTitle(R.string.app_name);
         setTaskDescription(new ActivityManager.TaskDescription(getString(R.string.app_name)));
@@ -64,21 +64,21 @@ public class MapActivity extends AppCompatActivity {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onMapReady(@NonNull final MapboxMap m) {
-                mapboxMap = m;
-                UiSettings ui = mapboxMap.getUiSettings();
+            public void onMapReady(@NonNull final MapLibreMap m) {
+                mapLibreMap = m;
+                UiSettings ui = mapLibreMap.getUiSettings();
                 ui.setLogoEnabled(false);
                 ui.setAttributionEnabled(false);
                 ui.setCompassEnabled(true);
                 ui.setTiltGesturesEnabled(false);
 
                 // Restrict map bounds
-                mapboxMap.setLatLngBoundsForCameraTarget(CAMP_BOUNDS);
-                mapboxMap.setMinZoomPreference(13);
-                mapboxMap.setMaxZoomPreference(20);
+                mapLibreMap.setLatLngBoundsForCameraTarget(CAMP_BOUNDS);
+                mapLibreMap.setMinZoomPreference(13);
+                mapLibreMap.setMaxZoomPreference(20);
 
                 // Set map style
-                mapboxMap.setStyle(new Style.Builder().fromUri("asset://map-data/style.json"));
+                mapLibreMap.setStyle(new Style.Builder().fromUri("asset://map-data/style.json"));
 
                 /*
                  * Location button toggles between location disabled, track location, and track location
@@ -88,10 +88,10 @@ public class MapActivity extends AppCompatActivity {
                 locationToggle = (FloatingActionButton) findViewById(R.id.location_toggle);
                 locationToggle.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
-                        LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                        LocationComponent locationComponent = mapLibreMap.getLocationComponent();
                         if (!locationComponentActivated) {
                             LocationComponentActivationOptions locationComponentActivationOptions = LocationComponentActivationOptions
-                                    .builder(thisActivity, mapboxMap.getStyle())
+                                    .builder(thisActivity, mapLibreMap.getStyle())
                                     .build();
                             locationComponent.activateLocationComponent(locationComponentActivationOptions);
                             locationComponentActivated = true;
@@ -132,7 +132,7 @@ public class MapActivity extends AppCompatActivity {
                     Manifest.permission.ACCESS_FINE_LOCATION
             }, PERMISSIONS_LOCATION);
         } else {
-            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+            LocationComponent locationComponent = mapLibreMap.getLocationComponent();
             locationComponent.setLocationComponentEnabled(true);
             PackageManager packageManager = getPackageManager();
             if (packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_COMPASS)
@@ -148,7 +148,7 @@ public class MapActivity extends AppCompatActivity {
             locationComponent.setCameraMode(CameraMode.TRACKING);
             mapView.setOnTouchListener(new View.OnTouchListener() {
                 public boolean onTouch(View view, MotionEvent event) {
-                    LocationComponent locationComponent = mapboxMap.getLocationComponent();
+                    LocationComponent locationComponent = mapLibreMap.getLocationComponent();
                     locationComponent.setLocationComponentEnabled(false);
                     locationComponent.setCameraMode(CameraMode.NONE);
                     locationToggle.setImageDrawable(ContextCompat.getDrawable(MapActivity.this,
@@ -163,7 +163,7 @@ public class MapActivity extends AppCompatActivity {
      * Disable location tracking / display.
      */
     private void disableLocation() {
-        LocationComponent locationComponent = mapboxMap.getLocationComponent();
+        LocationComponent locationComponent = mapLibreMap.getLocationComponent();
         locationComponent.setLocationComponentEnabled(false);
         locationComponent.setCameraMode(CameraMode.NONE);
         locationToggle.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_location));
@@ -197,7 +197,7 @@ public class MapActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Reload preferences
-        if (mapboxMap != null) {
+        if (mapLibreMap != null) {
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
                     "location_button", true)) {
                 locationToggle.setVisibility(View.VISIBLE);
